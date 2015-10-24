@@ -1,17 +1,18 @@
 Meteor.methods({
-  "getSeriesData": function() {
-    var series = getCurrenciesGrowthSeries();
+  "getSeriesData": function(limit) {
+    console.log("LIMIT=========", limit);
+    var series = getCurrenciesGrowthSeries(limit);
     console.log("Series: ", series)
     return series
   }
 })
 
-function getCurrenciesGrowthSeries() {
+function getCurrenciesGrowthSeries(limit) {
   var series = [];
   var currencyNames = getCurrencyNames();
   console.log(currencyNames)
   currencyNames.forEach(function(currencyName) {
-    var accumulativeGrowth = getAccumulativeGrowthForCurrency(currencyName)
+    var accumulativeGrowth = getAccumulativeGrowthForCurrency(currencyName,limit);
 
     series.push({
       name: currencyName,
@@ -36,13 +37,12 @@ function getCurrencyNames() {
   return names;
 }
 
-function getAccumulativeGrowthForCurrency(currencyName) {
+function getAccumulativeGrowthForCurrency(currencyName,limit) {
   var growth = [];
   var growthByDate = AvgGrowths.find({currencyName: currencyName}, {
-    sort: {
-      time: 1
-    }
-  }).fetch()
+    sort: {time: 1},
+    limit: parseInt(limit) || 10000
+  }).fetch();
 
 
   growthByDate.forEach(function(currency) {

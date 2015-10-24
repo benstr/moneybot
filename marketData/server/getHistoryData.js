@@ -8,7 +8,7 @@ Meteor.startup(function () {
   Meteor.setTimeout(function () {
     if (InstHistory.find().count() === 0) {
       console.log("~~ START SEED MARKET DATA GET ~~");
-      storeAllHistory(50);
+      storeAllHistory(125);
       console.log("~~ FINISHED SEED DATA GET ~~");
     }
   },15000);

@@ -6,15 +6,38 @@ Template.body.onRendered( function () {
 });
 
 Template.body.helpers({
-
+  totalCurr: function () {
+    return Currencies.find().count();
+  },
+  totalPairs: function () {
+    return Instruments.find().count();
+  },
+  totalGrowths: function () {
+    return AvgGrowths.find().count();
+  },
+  totalHist: function () {
+    return CurrHistory.find().count();
+  }
 });
 
+Template.body.events = {
+  'change #reactive': function (event, template) {
+    var newValue = $(event.target).val();
+    Meteor.call("getSeriesData", newValue, function (error, series) {
+      console.log(error, series)
+      builtArea(series);
+    })
+  }
+}
 
 // Function to draw the area chart
 
 function builtArea(series) {
   $('#container-area').highcharts({
-    chart: {type: 'area'},
+    chart: {
+      type: 'area',
+      zoomType: 'x'
+    },
     title: {text: 'Currency Growth'},
     credits: {enabled: false},
     subtitle: {enabled: false},
@@ -44,7 +67,7 @@ function builtArea(series) {
 
     plotOptions: {
       area: {
-        pointStart: 1940,
+        pointStart: 0,
         marker: {
           enabled: false,
           symbol: 'circle',
