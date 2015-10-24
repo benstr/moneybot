@@ -28,7 +28,7 @@ SyncedCron.add({
   }
 });
 
-SyncedCron.start();
+//SyncedCron.start();
 
 
 // ------------------------
@@ -67,12 +67,12 @@ function insertCurrencies (inst) {
     currNum ++;
     var currObj = Currencies.upsert({name: currency}, {name: currency});
     if (currNum == 1) {
-      instrument.firstCurrencyId = currObj.insertedId ? currObj.insertedId : Currencies.findOne({name: currency })._id;
-      instrument.firstCurrencyName = currency;
+      instrument.baseCurrencyId = currObj.insertedId ? currObj.insertedId : Currencies.findOne({name: currency })._id;
+      instrument.baseCurrencyName = currency;
     }
     if (currNum == 2) {
-      instrument.secondCurrencyId = currObj.insertedId ? currObj.insertedId : Currencies.findOne({name: currency })._id;
-      instrument.secondCurrencyName = currency;
+      instrument.counterCurrencyId = currObj.insertedId ? currObj.insertedId : Currencies.findOne({name: currency })._id;
+      instrument.counterCurrencyName = currency;
     }
   });
 

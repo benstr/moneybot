@@ -2,6 +2,6 @@
   "OANDA_TOKEN": "<Oanda API Key>",
   "OANDA_ACCOUNT": "<Oanda account number>",
   "public": {
-    "candleFormats": ["H4","D"]
+    "candleFormats": ["D"]
   }
 }
