@@ -8,7 +8,9 @@ Meteor.startup(function () {
   Meteor.setTimeout(function () {
     if (InstHistory.find().count() === 0) {
       console.log("~~ START SEED MARKET DATA GET ~~");
-      storeAllHistory(125);
+      var from = moment().subtract(120, "days");
+      var utc = from.utc().format("YYYY-MM-DDTHH:mm:ss.000000Z");
+      storeHistory(utc);
       console.log("~~ FINISHED SEED DATA GET ~~");
     }
   },15000);
@@ -29,12 +31,12 @@ SyncedCron.add({
   },
   job: function() {
     console.log("~~ START CURRENT MARKET DATA GET ~~");
-    storeAllHistory(1);
+    storeHistory();
     console.log("~~ FINISHED MARKET DATA GET ~~");
   }
 });
 
-//SyncedCron.start();
+SyncedCron.start();
 
 
 // ------------------------
@@ -42,16 +44,17 @@ SyncedCron.add({
 // ------------------------
 
 // Wrapper function to get and store histories
-function storeAllHistory (qty) {
+function storeHistory(start) {
   var candleFormats = Meteor.settings.public.candleFormats;
   var instruments = _.map(Instruments.find().fetch(),function(num, key){ return num.instrument; });
   var timer = 0;
 
   candleFormats.forEach(function (candleFormat) {
     instruments.forEach(function (instrument) {
+      start = start || getStartForInstrument(instrument, candleFormat);
       Meteor.setTimeout(function () {
-        console.log("Getting " + instrument + " " + candleFormat + " candle...");
-        var httpResult = getHistory(instrument,candleFormat,qty);
+        console.log(`Getting ${instrument} ${candleFormat} candles since ${start}...`);
+        var httpResult = getHistory(instrument,candleFormat,start);
         if (httpResult.data) {
           var history = httpResult.data;
           insertHistory(history);
@@ -62,14 +65,26 @@ function storeAllHistory (qty) {
   });
 }
 
+function getStartForInstrument(instrument, candleFormat) {
+  var last = InstHistory.findOne({
+    instrumentName: instrument,
+    granularity: candleFormat
+  }, {
+    sort: {
+      time:-1
+    }
+  });
+  return last.time;
+}
+
 // Get History for a pair and granularity
-function getHistory (inst,candleFormat,qty) {
-  return HTTP.get(OANDA.baseURL + "candles?instrument=" + inst + "&count=" + qty + "&granularity=" + candleFormat + "&dailyAlignment=0&alignmentTimezone=America%2FNew_York", OANDA.header);
+function getHistory (inst,candleFormat,start) {
+  return HTTP.get(OANDA.baseURL + "candles?instrument=" + inst + "&start=" + encodeURIComponent(start) + "&granularity=" + candleFormat + "&dailyAlignment=0&alignmentTimezone=America%2FNew_York", OANDA.header);
 }
 
 // Save History
 function insertHistory (history) {
-  console.log("Upserting history for " + history.instrument + " " + history.granularity);
+  console.log(`Upserting ${history.candles.length} candle(s) for ${history.instrument} ${history.granularity}`);
   var instrument = Instruments.findOne({instrument: history.instrument});
   var currencies = history.instrument.split('_');
   var baseCurrency = Currencies.findOne({name: currencies[0]});
