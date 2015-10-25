@@ -76,7 +76,7 @@ function builtArea(series) {
     },
 
     plotOptions: {
-      area: {
+      line: {
         pointStart: 0,
         marker: {
           enabled: false,
