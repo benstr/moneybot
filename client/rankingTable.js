@@ -1,5 +1,5 @@
-Template.rankingTable.created = function() {
-
+Template.rankingTable.rendered = function() {
+    this.subscribe('instruments');
 };
 
 Template.rankingTable.helpers({
@@ -25,20 +25,21 @@ Template.rankingTable.helpers({
 
         if (rankingSeries && rankingSeries.length) {
 
-            var topThree  = rankingSeries.slice(0,3);
-            var bottomThree = rankingSeries.slice(-3, rankingSeries.length);
+            return getPairs(rankingSeries);
 
-            var pairPairs = topThree.map( (topSeries) =>
-                    bottomThree.map((bottomSeries) =>
-                        `${topSeries.name}_${bottomSeries.name}`
-                    )
-                );
+        }
+    },
 
-            var pairs = pairPairs.reduce( (a,b) => a.concat(b), []);
+    validPairs: function() {
+        var sortObj = getSortObject(this.limit);
+        var rankingSeries = SeriesData.find({},{sort: sortObj}).fetch();
 
-            return pairs;
+        if (rankingSeries && rankingSeries.length) {
+            var pairs = getPairs(rankingSeries);
+            return Instruments.find({ instrument: { $in : pairs } });
         }
     }
+
 
 });
 
@@ -47,4 +48,19 @@ function getSortObject(limit) {
     var sortObj = {};
     sortObj['data.' + sortLimit] = -1;
     return sortObj;
+}
+
+function getPairs(rankingSeries) {
+    var topThree  = rankingSeries.slice(0,3);
+    var bottomThree = rankingSeries.slice(-3, rankingSeries.length);
+
+    var pairPairs = topThree.map( (topSeries) =>
+        bottomThree.map((bottomSeries) =>
+            `${topSeries.name}_${bottomSeries.name}`
+        )
+    );
+
+    var pairs = pairPairs.reduce( (a,b) => a.concat(b), []);
+
+    return pairs;
 }

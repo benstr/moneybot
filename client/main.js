@@ -2,11 +2,15 @@
 SeriesData = new Mongo.Collection("seriesData");
 
 Template.body.onCreated(function() {
-  this.limit = new ReactiveVar(125);
+  this.limit = new ReactiveVar(120);
 });
 
 Template.body.onRendered( function () {
   this.subscribe("currencies");
+  this.subscribe("totalCurr");
+  this.subscribe("totalPairs");
+  this.subscribe("totalGrowths");
+  this.subscribe("totalHist");
 
   this.autorun(function() {
     this.subscribe("seriesData", this.limit.get());
@@ -20,16 +24,16 @@ Template.body.onRendered( function () {
 
 Template.body.helpers({
   totalCurr: function () {
-    return Currencies.find().count();
+    return Counts.get("totalCurr");
   },
   totalPairs: function () {
-    return Instruments.find().count();
+    return Counts.get("totalPairs");
   },
   totalGrowths: function () {
-    return AvgGrowths.find().count();
+    return Counts.get("totalGrowths");
   },
   totalHist: function () {
-    return CurrHistory.find().count();
+    return Counts.get("totalHist");
   },
   limit: function() {
     return Template.instance().limit.get();

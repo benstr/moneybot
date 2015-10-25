@@ -1,6 +1,26 @@
 Meteor.publish("currencies", function() {
   return Currencies.find();
-})
+});
+
+Meteor.publish('totalCurr', function() {
+  Counts.publish(this, 'totalCurr', Currencies.find());
+});
+
+Meteor.publish('totalPairs', function() {
+  Counts.publish(this, 'totalPairs', Instruments.find());
+});
+
+Meteor.publish('totalGrowths', function() {
+  Counts.publish(this, 'totalGrowths', AvgGrowths.find());
+});
+
+Meteor.publish('totalHist', function() {
+  Counts.publish(this, 'totalHist', CurrHistory.find());
+});
+
+Meteor.publish('instruments', function() {
+  return Instruments.find();
+});
 
 Meteor.publish("seriesData", function(limit) {
   var publication = this;
