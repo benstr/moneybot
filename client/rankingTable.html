@@ -1,0 +1,25 @@
+<template name="rankingTable">
+
+    <h4>Latest Values</h4>
+
+    <table>
+        <th>
+            <td>Cur</td>
+            <td>Val</td>
+        </th>
+        <tbody>
+            {{#each rankingData in latestRankings}}
+                <tr>
+                    <td>
+                        {{rankingData.currencyName}}
+                    </td>
+                    <td>
+                        {{rankingData.latestValue}}
+                    </td>
+                </tr>
+            {{/each}}
+        </tbody>
+
+    </table>
+
+</template>

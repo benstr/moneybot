@@ -1,7 +1,14 @@
+Template.body.onCreated( function() {
+
+  this.series = new ReactiveVar;
+
+});
+
 Template.body.onRendered( function () {
   Meteor.call("getSeriesData", function(error, series) {
     builtArea(series);
-  })
+    this.series.set(series);
+  }.bind(this));
 });
 
 Template.body.helpers({
@@ -16,6 +23,9 @@ Template.body.helpers({
   },
   totalHist: function () {
     return CurrHistory.find().count();
+  },
+  series: function(){
+    return Template.instance().series.get();
   }
 });
 
