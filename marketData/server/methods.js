@@ -1,8 +1,7 @@
 Meteor.methods({
   "getSeriesData": function(limit) {
-    console.log("LIMIT=========", limit);
+    console.log("LIMIT=========", limit || "no limit");
     var series = getCurrenciesGrowthSeries(limit);
-    console.log("Series: ", series)
     return series
   }
 })
@@ -10,7 +9,7 @@ Meteor.methods({
 function getCurrenciesGrowthSeries(limit) {
   var series = [];
   var currencyNames = getCurrencyNames();
-  console.log(currencyNames)
+
   currencyNames.forEach(function(currencyName) {
     var accumulativeGrowth = getAccumulativeGrowthForCurrency(currencyName,limit);
 
@@ -27,8 +26,6 @@ function getCurrencyNames() {
   var names = [];
 
   var currencies = Currencies.find().fetch();
-
-  console.log("Currencies: ", currencies)
 
   currencies.forEach(function(currency) {
     names.push(currency.name)

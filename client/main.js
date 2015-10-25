@@ -1,6 +1,5 @@
 Template.body.onRendered( function () {
   Meteor.call("getSeriesData", function(error, series) {
-    console.log(error, series)
     builtArea(series);
   })
 });
@@ -24,7 +23,6 @@ Template.body.events = {
   'change #reactive': function (event, template) {
     var newValue = $(event.target).val();
     Meteor.call("getSeriesData", newValue, function (error, series) {
-      console.log(error, series)
       builtArea(series);
     })
   }
