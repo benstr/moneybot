@@ -80,54 +80,5 @@ function builtArea(series) {
     },
 
     series: series
-    // [{
-    //   name: 'John',
-    //   data: [5, 3, 4, 7, 2]
-    // }, {
-    //   name: 'Jane',
-    //   data: [2, -2, -3, 2, 1]
-    // }, {
-    //   name: 'Joe',
-    //   data: [3, 4, 4, -2, 5]
-    // }]
   });
 }
-
-function getCurrenciesGrowthSeries() {
-  var series = [];
-  var currencyNames = getCurrencyNames();
-  console.log(currencyNames)
-  currencyNames.forEach(function(currencyName) {
-    var accumulativeGrowth = getAccumulativeGrowthForCurrency(currencyName)
-
-    series.push({
-      name: currencyName,
-      data: []
-    });
-  });
-
-  return series
-}
-
-function getCurrencyNames() {
-  var names = [];
-
-  var currencies = Currencies.find().fetch();
-
-  console.log("Currencies: ", currencies)
-
-  currencies.forEach(function(currency) {
-    names.push(currency.name)
-  })
-
-  return names;
-}
-
-function getAccumulativeGrowthForCurrency(currencyName) {
-  console.log(currencyName)
-  var growthByDate = AvgGrowths.findOne({currencyName: currencyName})
-
-  console.log("Growth: ", growthByDate)
-}
-
-
