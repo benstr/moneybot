@@ -69,6 +69,7 @@ standard-minifiers@1.0.1
 stevezhu:lodash@3.10.1
 templating@1.1.4
 templating-tools@1.0.0
+tmeasday:publish-counts@0.7.2
 tracker@1.0.9
 ui@1.0.8
 underscore@1.0.4
