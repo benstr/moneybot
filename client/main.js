@@ -1,14 +1,21 @@
-Template.body.onCreated( function() {
+// Computed collection. See seriesData publication.
+SeriesData = new Mongo.Collection("seriesData");
 
-  this.series = new ReactiveVar;
-
+Template.body.onCreated(function() {
+  this.limit = new ReactiveVar(125);
 });
 
 Template.body.onRendered( function () {
-  Meteor.call("getSeriesData", function(error, series) {
-    builtArea(series);
-    this.series.set(series);
+  this.subscribe("currencies");
+
+  this.autorun(function() {
+    this.subscribe("seriesData", this.limit.get());
   }.bind(this));
+
+  this.autorun(function() {
+    console.log("rendering");
+    builtArea(SeriesData.find({}, {sort: {time: 1}}).fetch());
+  })
 });
 
 Template.body.helpers({
@@ -24,17 +31,15 @@ Template.body.helpers({
   totalHist: function () {
     return CurrHistory.find().count();
   },
-  series: function(){
-    return Template.instance().series.get();
+  limit: function() {
+    return Template.instance().limit.get();
   }
 });
 
 Template.body.events = {
   'change #reactive': function (event, template) {
-    var newValue = $(event.target).val();
-    Meteor.call("getSeriesData", newValue, function (error, series) {
-      builtArea(series);
-    })
+    var limit = $(event.target).val();
+    Template.instance().limit.set(limit);
   }
 }
 
@@ -42,10 +47,6 @@ Template.body.events = {
 
 function builtArea(series) {
   $('#container-area').highcharts({
-    chart: {
-      type: 'area',
-      zoomType: 'x'
-    },
     title: {text: 'Currency Growth'},
     credits: {enabled: false},
     subtitle: {enabled: false},
