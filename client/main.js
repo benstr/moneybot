@@ -34,6 +34,9 @@ Template.body.helpers({
   },
   totalHist: function () {
     return Counts.get("totalHist");
+  },
+  limit: function() {
+    return Template.instance().limit.get();
   }
 });
 

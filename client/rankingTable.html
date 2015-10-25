@@ -1,0 +1,58 @@
+<template name="rankingTable">
+
+    <style>
+        .col {
+            width: 30%;
+            float: left;
+        }
+    </style>
+
+    <div>
+
+
+        <div class="col">
+            <h3>Latest Values</h3>
+
+            <table>
+                <th>
+                    <td>Cur</td>
+                    <td>Val</td>
+                </th>
+                <tbody>
+                    {{#each rankingData in latestRankings}}
+                        <tr>
+                            <td>
+                                {{rankingData.currencyName}}
+                            </td>
+                            <td>
+                                {{rankingData.latestValue}}
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+
+            </table>
+        </div>
+
+
+
+        <div class="col">
+            <h3>Top/Bot Pairs</h3>
+            <ul>
+                {{#each pair in pairs}}
+                    <li>{{pair}}</li>
+                {{/each}}
+            </ul>
+        </div>
+
+        <div class="col">
+            <h3>Valid Pairs</h3>
+            <ul>
+                {{#each pair in validPairs}}
+                    <li>{{pair.instrument}}</li>
+                {{/each}}
+            </ul>
+        </div>
+
+    </div>
+</template>
