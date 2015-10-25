@@ -1,6 +1,20 @@
+// Computed collection. See seriesData publication.
+SeriesData = new Mongo.Collection("seriesData");
+
+Template.body.onCreated(function() {
+  this.limit = new ReactiveVar(125);
+});
+
 Template.body.onRendered( function () {
-  Meteor.call("getSeriesData", function(error, series) {
-    builtArea(series);
+  this.subscribe("currencies");
+
+  this.autorun(function() {
+    this.subscribe("seriesData", this.limit.get());
+  }.bind(this));
+
+  this.autorun(function() {
+    console.log("rendering");
+    builtArea(SeriesData.find({}, {sort: {time: 1}}).fetch());
   })
 });
 
@@ -21,10 +35,8 @@ Template.body.helpers({
 
 Template.body.events = {
   'change #reactive': function (event, template) {
-    var newValue = $(event.target).val();
-    Meteor.call("getSeriesData", newValue, function (error, series) {
-      builtArea(series);
-    })
+    var limit = $(event.target).val();
+    Template.instance().limit.set(limit);
   }
 }
 

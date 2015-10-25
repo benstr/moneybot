@@ -4,7 +4,6 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-autopublish
 insecure
 percolatestudio:synced-cron
 http
@@ -28,3 +27,5 @@ random
 ejson
 spacebars
 check
+peerlibrary:reactive-publish
+reactive-var
