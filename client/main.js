@@ -32,10 +32,6 @@ Template.body.events = {
 
 function builtArea(series) {
   $('#container-area').highcharts({
-    chart: {
-      type: 'area',
-      zoomType: 'x'
-    },
     title: {text: 'Currency Growth'},
     credits: {enabled: false},
     subtitle: {enabled: false},
