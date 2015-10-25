@@ -18,6 +18,10 @@ Meteor.publish('totalHist', function() {
   Counts.publish(this, 'totalHist', CurrHistory.find());
 });
 
+Meteor.publish('instruments', function() {
+  return Instruments.find();
+});
+
 Meteor.publish("seriesData", function(limit) {
   var publication = this;
   this.autorun(function() {
