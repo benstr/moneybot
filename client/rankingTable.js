@@ -1,7 +1,13 @@
+Template.rankingTable.created = function() {
+  this.pairPrices = new ReactiveVar({bid:0,ask:0,time:''});
+};
+
+
 Template.rankingTable.rendered = function () {
   this.subscribe('instruments');
   this.selectedPair = new ReactiveVar('');
 };
+
 
 Template.rankingTable.helpers({
 
@@ -29,6 +35,10 @@ Template.rankingTable.helpers({
 
   isPairSelected: function (pair) {
     return Template.instance().selectedPair.get() === pair.instrument ? 'selected' : '';
+  },
+
+  prices: function() {
+    return Template.instance().pairPrices.get();
   }
 
 });
@@ -37,7 +47,7 @@ Template.rankingTable.events({
 
   'click .valid-pair-item': function (e, template) {
     var el = $(e.currentTarget);
-    var pair = el.text();
+    var pair = $.trim(el.text());
     var pairs = pair.split('_');
     var theHighchart = $('#container-area').highcharts();
 
@@ -48,6 +58,17 @@ Template.rankingTable.events({
           series.hide();
         } else {
           series.show();
+
+          Meteor.call('getRatesData', pair, function (err, result) {
+            console.log(result);
+            var data = result.data.prices[0];
+            template.pairPrices.set({
+              bid: data.bid,
+              ask: data.ask,
+              time: moment(data.time).fromNow()
+            });
+          });
+
         }
       });
     } else {
