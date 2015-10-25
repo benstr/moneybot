@@ -3,8 +3,17 @@ Meteor.methods({
     console.log("LIMIT=========", limit || "no limit");
     var series = getCurrenciesGrowthSeries(limit);
     return series
+  },
+
+  'getRatesData': function(instrument) {
+    console.log(`GETTING RATE INFO FOR: ${instrument}`);
+
+    var urlString = `${OANDA.baseURL}prices?accountId=${OANDA.account}&instruments=${instrument}`
+    console.log('URL: ', urlString);
+
+    return HTTP.get(urlString, OANDA.header);
   }
-})
+});
 
 function getCurrenciesGrowthSeries(limit) {
   var series = [];
