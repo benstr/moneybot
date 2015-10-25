@@ -2,7 +2,7 @@
 SeriesData = new Mongo.Collection("seriesData");
 
 Template.body.onCreated(function() {
-  this.limit = new ReactiveVar(120);
+  this.limit = new ReactiveVar(20);
 });
 
 Template.body.onRendered( function () {
