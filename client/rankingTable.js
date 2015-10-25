@@ -34,7 +34,7 @@ Template.rankingTable.helpers({
   },
 
   isPairSelected: function (pair) {
-    return Template.instance().selectedPair.get() === pair.instrument ? 'selected' : '';
+    return Template.instance().selectedPair.get() === pair.displayName ? 'selected' : '';
   },
 
   prices: function() {
@@ -47,19 +47,22 @@ Template.rankingTable.events({
 
   'click .valid-pair-item': function (e, template) {
     var el = $(e.currentTarget);
-    var pair = $.trim(el.text());
-    var pairs = pair.split('_');
+    var instrumentId = el.data('instrument');
+    var instrument = Instruments.findOne(instrumentId);
+    var pairText = instrument.displayName;
+    var pairArray = [instrument.baseCurrencyName, instrument.counterCurrencyName];
     var theHighchart = $('#container-area').highcharts();
 
-    if (template.selectedPair.get() !== pair) {
-      template.selectedPair.set(pair);
+    if (template.selectedPair.get() !== pairText) {
+      template.selectedPair.set(pairText);
+
       theHighchart.series.forEach(function (series) {
-        if (pairs.indexOf(series.name) === -1) {
+        if (pairArray.indexOf(series.name) === -1) {
           series.hide();
         } else {
           series.show();
 
-          Meteor.call('getRatesData', pair, function (err, result) {
+          Meteor.call('getRatesData', instrument.instrument, function (err, result) {
             console.log(result);
             var data = result.data.prices[0];
             template.pairPrices.set({

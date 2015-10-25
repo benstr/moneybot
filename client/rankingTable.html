@@ -12,6 +12,7 @@
 
     .selected {
       font-weight: 900;
+      color: blue;
     }
   </style>
 
@@ -44,7 +45,7 @@
       <h3>Winners!</h3>
       <ul>
         {{#each pair in validPairs}}
-          <li class="valid-pair-item {{isPairSelected pair}}">{{pair.displayName}}</li>
+          <li data-instrument="{{pair._id}}" class="valid-pair-item {{isPairSelected pair}}">{{pair.displayName}}</li>
         {{/each}}
       </ul>
     </div>

@@ -38,7 +38,7 @@ function getCurrencyNames() {
 
   currencies.forEach(function(currency) {
     names.push(currency.name)
-  })
+  });
 
   return names;
 }
