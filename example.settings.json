@@ -1,6 +1,7 @@
 {
   "OANDA_TOKEN": "<Oanda API Key>",
   "OANDA_ACCOUNT": "<Oanda account number>",
+  "OANDA_BASEURL": "https://api-fxtrade.oanda.com/v1/", // or "api-fxpractice" for a practice account
   "public": {
     "candleFormats": ["D"]
   }
