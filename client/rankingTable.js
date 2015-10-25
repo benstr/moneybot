@@ -12,7 +12,7 @@ Template.rankingTable.helpers({
 
       return rankingSeries.map((currencySeries) => ({
           currencyName: currencySeries.name,
-          latestValue: currencySeries.data[currencySeries.data.length - 1]
+          latestValue: numeral(currencySeries.data[currencySeries.data.length - 1]).format('0.00') + "%"
         })
       );
 

@@ -45,6 +45,7 @@ momentjs:moment@2.10.6
 mongo@1.1.2
 mongo-id@1.0.1
 npm-mongo@1.4.39_1
+numeral:numeral@1.5.3_1
 observe-sequence@1.0.7
 okgrow:promise@0.9.5
 ordered-dict@1.0.4
