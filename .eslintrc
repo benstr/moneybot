@@ -1,0 +1,40 @@
+{
+    "rules": {
+        "indent": [
+            2,
+            4
+        ],
+        "quotes": [
+            2,
+            "single",
+            "avoid-escape"
+        ],
+        "linebreak-style": [
+            2,
+            "unix"
+        ],
+        "semi": [
+            2,
+            "always"
+        ]
+    },
+    "env": {
+        "es6": true,
+        "node": true,
+        "browser": true,
+        "meteor": true
+    },
+    "extends": "eslint:recommended",
+
+    "globals": {
+        "_": true,
+        "AvgGrowths": true,
+        "Currencies": true,
+        "CurrHistory": true,
+        "InstHistory": true,
+        "Instruments": true,
+        "lodash": false,
+        "OANDA": true,
+        "SynchedCron": false
+    }
+}
