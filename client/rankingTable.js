@@ -11,10 +11,9 @@ Template.rankingTable.helpers({
 
     if (rankingSeries) {
       return rankingSeries.map((currencySeries) => ({
-          currencyName: currencySeries.name,
-          latestValue: numeral(currencySeries.data[currencySeries.data.length - 1]).format('0.00') + "%"
-        })
-      );
+        currencyName: currencySeries.name,
+        latestValue: numeral(currencySeries.data[currencySeries.data.length - 1]).format('0.00') + '%'
+      }));
     }
   },
 
@@ -49,8 +48,7 @@ Template.rankingTable.events({
           series.hide();
         } else {
           series.show();
-    }
-
+        }
       });
     } else {
       theHighchart.series.forEach(function (series) {
@@ -77,9 +75,9 @@ function getPairs(rankingSeries) {
 
 // Find all possible currency pairs like TOP_BOT
   var pairPairs = topThree.map((topSeries) =>
-      bottomThree.map((bottomSeries) =>
+    bottomThree.map((bottomSeries) =>
       [`${topSeries.name}_${bottomSeries.name}`, `${bottomSeries.name}_${topSeries.name}`]
-      )
+    )
   );
 
 // Flatten the array and return it to the template
