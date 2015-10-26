@@ -50,6 +50,15 @@ Template.body.events = {
 // Function to draw the area chart
 
 function builtArea(series) {
+  _.forEach(series, function(oneSeries) {
+    let lastDataValue = numeral(oneSeries.data[oneSeries.data.length - 1])
+      .format('0.00') + '%';
+      
+    _.extend(oneSeries, {
+      name: `${oneSeries.name} ${lastDataValue}`,
+      currentValue: lastDataValue});
+  });
+  
   $('#container-area').highcharts({
     title: {text: 'Currency Growth'},
     credits: {enabled: false},
