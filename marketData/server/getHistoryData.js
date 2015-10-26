@@ -10,7 +10,6 @@ Meteor.startup(function () {
       console.log("~~ START SEED MARKET DATA GET ~~");
       var from = moment().subtract(120, "days");
       var utc = from.utc().format("YYYY-MM-DDTHH:mm:ss.000000Z");
-      console.log("utc", utc);
       storeHistory(utc);
       console.log("~~ FINISHED SEED DATA GET ~~");
     }
