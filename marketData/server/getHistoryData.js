@@ -14,12 +14,6 @@ Meteor.startup(function () {
       console.log("~~ FINISHED SEED DATA GET ~~");
     }
   },15000);
-  Meteor.setTimeout(function () {
-    seedGrowths();
-  },135000);
-
-  // TODO: Server startup check if our data is current and fill in the gaps as needed
-
 });
 
 // Cron job update current candle values every 5 minutes
@@ -79,7 +73,7 @@ function getStartForInstrument(instrument, candleFormat) {
 
 // Get History for a pair and granularity
 function getHistory (inst,candleFormat,start) {
-  return HTTP.get(OANDA.baseURL + "candles?instrument=" + inst + "&start=" + encodeURIComponent(start) + "&granularity=" + candleFormat + "&dailyAlignment=0&alignmentTimezone=America%2FNew_York", OANDA.header);
+  return HTTP.get(OANDA.baseURL + "candles?instrument=" + inst + "&start=" + encodeURIComponent(start) + "&granularity=" + candleFormat + "&dailyAlignment=0&alignmentTimezone=America%2FNew_York&includeFirst=false", OANDA.header);
 }
 
 // Save History
@@ -92,78 +86,52 @@ function insertHistory (history) {
 
 
   history.candles.forEach(function (data) {
-    var pair = data;
-
-    pair.openMid = data.openBid + (data.openAsk - data.openBid) / 2;
-    pair.closeMid = data.closeBid + (data.closeAsk - data.closeBid) / 2;
-    pair.instrumentId = instrument._id;
-    pair.instrumentName = history.instrument;
-    pair.granularity = history.granularity;
-
-    InstHistory.update({$and:[{time:pair.time},{instrumentId:pair.instrumentId},{granularity:pair.granularity}]},pair, {upsert:true});
-
-    var baseCurr = {
-      currencyId: baseCurrency._id,
-      currencyName: baseCurrency.name,
-      time: data.time,
-      granularity: history.granularity,
+    var pair = _.extend(data, {
+      openMid: data.openBid + (data.openAsk - data.openBid) / 2,
+      closeMid: data.closeBid + (data.closeAsk - data.closeBid) / 2,
       instrumentId: instrument._id,
       instrumentName: history.instrument,
-      growth: (pair.closeMid - pair.openMid) / pair.openMid * 100
-    };
+      granularity: history.granularity
+    });
 
-    CurrHistory.update({$and:[{time:baseCurr.time},{instrumentId:baseCurr.instrumentId},{granularity:baseCurr.granularity},{currencyId:baseCurr.currencyId}]},baseCurr, {upsert:true});
+    InstHistory.update({
+      time: pair.time,
+      instrumentId: pair.instrumentId,
+      granularity: pair.granularity
+    }, pair, {upsert:true});
 
-    var counterCurr = {
-      currencyId: counterCurrency._id,
-      currencyName: counterCurrency.name,
-      time: data.time,
-      granularity: history.granularity,
-      instrumentId: instrument._id,
-      instrumentName: history.instrument,
-      growth: (pair.closeMid - pair.openMid) / pair.openMid * 100 * -1
-    };
-
-    CurrHistory.update({$and:[{time:counterCurr.time},{instrumentId:counterCurr.instrumentId},{granularity:counterCurr.granularity},{currencyId:counterCurr.currencyId}]},counterCurr, {upsert:true});
+    upsertAvgGrowth(pair, baseCurrency,    (pair.closeMid - pair.openMid) / pair.openMid * 100);
+    upsertAvgGrowth(pair, counterCurrency, (pair.closeMid - pair.openMid) / pair.openMid * 100 * -1);
   });
 }
 
-// Calc and insert currency growth averages
-function seedGrowths () {
-  console.log("Seeding Currency Growths");
-  if (AvgGrowths.find().count() === 0) {
-    var candleFormats = Meteor.settings.public.candleFormats;
-    // get an array of currencies
-    var currencies = Currencies.find().fetch();
+function upsertAvgGrowth(pair, currency, growth) {
+  var avg = AvgGrowths.findOne({
+    time: pair.time,
+    currencyId: currency._id,
+    granularity: pair.granularity
+  });
 
-    // calculate the average curr growth on histories
-    currencies.forEach(function (currency) {
-      candleFormats.forEach(function (candleFormat) {
-        // find all histories older than the oldest growth and group them by date
-        var currHistories = CurrHistory.find({$and:[{currencyId:currency._id},{granularity:candleFormat}]}).fetch();
-        var times = _.uniq(_.pluck(currHistories, 'time'));
-
-        times.forEach(function (time) {
-          var currTimeHistories = CurrHistory.find({$and:[{currencyId:currency._id},{granularity:candleFormat},{time:time}]}).fetch();
-          var totalGrowth = 0;
-          var growths = _.pluck(currTimeHistories,'growth');
-          growths.forEach(function (growth) {
-            totalGrowth += growth;
-          });
-          var avgGrowth = {
-            currencyId: currency._id,
-            currencyName: currency.name,
-            time: time,
-            granularity: candleFormat,
-            growth: totalGrowth/growths.length
-          };
-
-
-          // insert growth records (one per curr)
-          AvgGrowths.insert(avgGrowth)
-          console.log("Inserted growth for " + currency.name + " for time " + time)
-        });
-      });
+  if (avg) {
+    AvgGrowths.update(avg._id, {
+      $set: {
+        growth: (avg.totalGrowth + growth) / (avg.histories + 1)
+      },
+      $inc: {
+        histories: 1,
+        totalGrowth: growth
+      }
+    });
+  }
+  else {
+    AvgGrowths.insert({
+      time: pair.time,
+      granularity: pair.granularity,
+      currencyId: currency._id,
+      currencyName: currency.name,
+      totalGrowth: growth,
+      histories: 1,
+      growth: growth
     });
   }
 }
