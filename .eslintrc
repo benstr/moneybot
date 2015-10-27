@@ -29,12 +29,16 @@
     "globals": {
         "_": true,
         "AvgGrowths": true,
+        "Counts": true,
         "Currencies": true,
         "CurrHistory": true,
         "InstHistory": true,
         "Instruments": true,
         "lodash": false,
+        "moment": false,
+        "numeral": false,
         "OANDA": true,
+        "SeriesData": true,
         "SynchedCron": false
     }
 }
