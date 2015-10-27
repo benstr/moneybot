@@ -43,18 +43,19 @@ function storeHistory(start) {
   var instruments = _.map(Instruments.find().fetch(),function(num, key){ return num.instrument; });
   var timer = 0;
 
+  var getHistories = _.throttle(function (candleFormat, instrument) {
+    start = start || getStartForInstrument(instrument, candleFormat);
+    console.log(`Getting ${instrument} ${candleFormat} candles since ${start}...`);
+    var httpResult = getHistory(instrument,candleFormat,start);
+    if (httpResult.data) {
+      var history = httpResult.data;
+      insertHistory(history);
+    }
+  }, 500);
+
   candleFormats.forEach(function (candleFormat) {
     instruments.forEach(function (instrument) {
-      start = start || getStartForInstrument(instrument, candleFormat);
-      Meteor.setTimeout(function () {
-        console.log(`Getting ${instrument} ${candleFormat} candles since ${start}...`);
-        var httpResult = getHistory(instrument,candleFormat,start);
-        if (httpResult.data) {
-          var history = httpResult.data;
-          insertHistory(history);
-        }
-      },timer);
-      timer = timer + 500;
+      getHistories(candleFormat, instrument);
     });
   });
 }
