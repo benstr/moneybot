@@ -1,51 +1,51 @@
 // Computed collection. See seriesData publication.
-SeriesData = new Mongo.Collection("seriesData");
+SeriesData = new Mongo.Collection('seriesData');
 
 Template.body.onCreated(function() {
   this.limit = new ReactiveVar(20);
 });
 
 Template.body.onRendered( function () {
-  this.subscribe("currencies");
-  this.subscribe("totalCurr");
-  this.subscribe("totalPairs");
-  this.subscribe("totalGrowths");
-  this.subscribe("totalHist");
+  this.subscribe('currencies');
+  this.subscribe('totalCurr');
+  this.subscribe('totalPairs');
+  this.subscribe('totalGrowths');
+  this.subscribe('totalHist');
 
   this.autorun(function() {
-    this.subscribe("seriesData", this.limit.get());
+    this.subscribe('seriesData', this.limit.get());
   }.bind(this));
 
   this.autorun(function() {
-    console.log("rendering");
+    console.log('rendering');
     builtArea(SeriesData.find({}, {sort: {time: 1}}).fetch());
   });
 });
 
 Template.body.helpers({
-  totalCurr: function () {
-    return Counts.get("totalCurr");
+  totalCurr() {
+    return Counts.get('totalCurr');
   },
-  totalPairs: function () {
-    return Counts.get("totalPairs");
+  totalPairs() {
+    return Counts.get('totalPairs');
   },
-  totalGrowths: function () {
-    return Counts.get("totalGrowths");
+  totalGrowths() {
+    return Counts.get('totalGrowths');
   },
-  totalHist: function () {
-    return Counts.get("totalHist");
+  totalHist() {
+    return Counts.get('totalHist');
   },
-  limit: function() {
+  limit() {
     return Template.instance().limit.get();
   }
 });
 
-Template.body.events = {
+Template.body.events({
   'change #reactive': function (event, template) {
     var limit = $(event.target).val();
-    Template.instance().limit.set(limit);
+    template.limit.set(limit);
   }
-}
+});
 
 // Function to draw the area chart
 
