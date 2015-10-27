@@ -19,7 +19,7 @@ Template.body.onRendered( function () {
   this.autorun(function() {
     console.log("rendering");
     builtArea(SeriesData.find({}, {sort: {time: 1}}).fetch());
-  })
+  });
 });
 
 Template.body.helpers({
@@ -55,7 +55,6 @@ function builtArea(series) {
       .format('0.00') + '%';
       
     _.extend(oneSeries, {
-      name: `${oneSeries.name} ${lastDataValue}`,
       currentValue: lastDataValue});
   });
   
@@ -82,11 +81,11 @@ function builtArea(series) {
         }
       }
     },
-
     tooltip: {
-      //pointFormat: '{series.name} produced <b>{point.y:,.0f}</b><br/>warheads in {point.x}'
+      formatter: function() {
+        return `${this.series.options._id}: ${numeral(this.point.y).format('0.00') + '%'}`;
+      }
     },
-
     plotOptions: {
       line: {
         pointStart: 0,
