@@ -18,7 +18,7 @@ Template.body.onRendered( function () {
 
   this.autorun(function() {
     console.log('rendering');
-    builtArea(SeriesData.find({}, {sort: {time: 1}}).fetch());
+    builtArea(SeriesData.find({}).fetch());
   });
 });
 

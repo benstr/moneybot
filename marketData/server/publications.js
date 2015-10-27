@@ -49,16 +49,13 @@ function getCurrencyNames() {
 }
 
 function getAccumulativeGrowthForCurrency(currencyName,limit) {
-  var growth = [];
   var growthByDate = AvgGrowths.find({currencyName: currencyName}, {
-    sort: {time: 1},
+    sort: {time: -1},
     limit: parseInt(limit) || 10000
   }).fetch();
 
-
-  growthByDate.forEach(function(currency) {
-    growth.push(currency.growth)
-  })
+  var growth = _.pluck(growthByDate, "growth");
+  growth.reverse();
 
   var accumulativeGrowth = 0;
   growth.forEach(function(growthPercentage, index) {
