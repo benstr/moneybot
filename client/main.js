@@ -1,62 +1,55 @@
 // Computed collection. See seriesData publication.
-SeriesData = new Mongo.Collection('seriesData');
+SeriesData = new Mongo.Collection('seriesData')
 
-Template.body.onCreated(function() {
-  this.limit = new ReactiveVar(20);
-});
-
-Template.body.onRendered( function () {
-  this.subscribe('currencies');
-  this.subscribe('totalCurr');
-  this.subscribe('totalPairs');
-  this.subscribe('totalGrowths');
-  this.subscribe('totalHist');
-
-  this.autorun(function() {
-    this.subscribe('seriesData', this.limit.get());
-  }.bind(this));
-
-  this.autorun(function() {
-    console.log('rendering');
-    builtArea(SeriesData.find({}).fetch());
-  });
-});
+Template.body.onCreated(() => {
+  let template = Template.instance()
+  template.limit = new ReactiveVar(20)
+  template.subscribe('currencies')
+  template.subscribe('totalCurr')
+  template.subscribe('totalPairs')
+  template.subscribe('totalGrowths')
+  template.subscribe('totalHist')
+  template.autorun(() => {
+    template.subscribe('seriesData', template.limit.get())
+    if (template.subscriptionsReady()) builtArea(SeriesData.find({}).fetch())
+  })
+})
 
 Template.body.helpers({
   totalCurr() {
-    return Counts.get('totalCurr');
+    return Counts.get('totalCurr')
   },
   totalPairs() {
-    return Counts.get('totalPairs');
+    return Counts.get('totalPairs')
   },
   totalGrowths() {
-    return Counts.get('totalGrowths');
+    return Counts.get('totalGrowths')
   },
   totalHist() {
-    return Counts.get('totalHist');
+    return Counts.get('totalHist')
   },
   limit() {
-    return Template.instance().limit.get();
+    return Template.instance().limit.get()
   }
-});
+})
 
 Template.body.events({
-  'change #reactive': function (event, template) {
-    var limit = $(event.target).val();
-    template.limit.set(limit);
+  'change #reactive'(event, template) {
+    let limit = $(event.target).val()
+    template.limit.set(limit)
   }
-});
+})
 
 // Function to draw the area chart
 
-function builtArea(series) {
-  _.forEach(series, function(oneSeries) {
+builtArea = (series) => {
+  series.forEach((oneSeries) => {
     let lastDataValue = numeral(oneSeries.data[oneSeries.data.length - 1])
-      .format('0.00') + '%';
+      .format('0.00') + '%'
       
     _.extend(oneSeries, {
-      currentValue: lastDataValue});
-  });
+      currentValue: lastDataValue})
+  })
   
   $('#container-area').highcharts({
     title: {text: 'Currency Growth'},
@@ -65,25 +58,24 @@ function builtArea(series) {
     xAxis: {
       allowDecimals: false,
       labels: {
-        formatter: function () {
-          return this.value; // clean, unformatted number for year
+        formatter() {
+          return this.value // clean, unformatted number for year
         }
       }
     },
-
     yAxis: {
       title: {
         text: 'Percent Growth'
       },
       labels: {
-        formatter: function () {
-          return this.value + '%';
+        formatter() {
+          return this.value + '%'
         }
       }
     },
     tooltip: {
-      formatter: function() {
-        return `${this.series.options._id}: ${numeral(this.point.y).format('0.00') + '%'}`;
+      formatter() {
+        return `${this.series.options._id}: ${numeral(this.point.y).format('0.00') + '%'}`
       }
     },
     plotOptions: {
@@ -103,5 +95,5 @@ function builtArea(series) {
     },
 
     series: series
-  });
+  })
 }

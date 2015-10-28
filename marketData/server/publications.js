@@ -1,64 +1,65 @@
-Meteor.publish("currencies", function() {
-  return Currencies.find();
-});
+Meteor.publish("currencies", () => {
+  return Currencies.find()
+})
 
 Meteor.publish('totalCurr', function() {
-  Counts.publish(this, 'totalCurr', Currencies.find());
-});
+  Counts.publish(this, 'totalCurr', Currencies.find())
+})
 
 Meteor.publish('totalPairs', function() {
-  Counts.publish(this, 'totalPairs', Instruments.find());
-});
+  Counts.publish(this, 'totalPairs', Instruments.find())
+})
 
 Meteor.publish('totalGrowths', function() {
-  Counts.publish(this, 'totalGrowths', AvgGrowths.find());
-});
+  Counts.publish(this, 'totalGrowths', AvgGrowths.find())
+})
 
 Meteor.publish('totalHist', function() {
-  Counts.publish(this, 'totalHist', CurrHistory.find());
-});
+  Counts.publish(this, 'totalHist', CurrHistory.find())
+})
 
-Meteor.publish('instruments', function() {
-  return Instruments.find();
-});
+Meteor.publish('instruments', () => {
+  return Instruments.find()
+})
 
 Meteor.publish("seriesData", function(limit) {
-  var publication = this;
-  this.autorun(function() {
-    getCurrenciesGrowthSeries(limit).map(function(growth) {
-      publication.added("seriesData", growth.name, growth);
-    });
-  });
-});
+  let self = this
 
-function getCurrenciesGrowthSeries(limit) {
-  var series = [];
-  var currencyNames = getCurrencyNames();
+  getCurrenciesGrowthSeries(limit).map((growth) => {
+    self.added("seriesData", growth.name, growth)
+    return self.ready()
+  })
 
-  return getCurrencyNames().map(function(currencyName) {
-    var accumulativeGrowth = getAccumulativeGrowthForCurrency(currencyName, limit);
+})
+
+let getCurrenciesGrowthSeries = limit => {
+  let series = []
+  let currencyNames = getCurrencyNames()
+
+  return getCurrencyNames().map((currencyName) => {
+    let accumulativeGrowth = getAccumulativeGrowthForCurrency(currencyName, limit)
     return {
       name: currencyName,
       data: accumulativeGrowth
-    };
-  });
+    }
+  })
 }
 
 function getCurrencyNames() {
-  return _.pluck(Currencies.find().fetch(), "name");
+  return _.pluck(Currencies.find().fetch(), "name")
 }
 
-function getAccumulativeGrowthForCurrency(currencyName,limit) {
-  var growthByDate = AvgGrowths.find({currencyName: currencyName}, {
+let getAccumulativeGrowthForCurrency = (currencyName,limit) => {
+  let growthByDate = AvgGrowths.find({currencyName: currencyName}, {
     sort: {time: -1},
     limit: parseInt(limit) || 10000
-  }).fetch();
+  }).fetch()
 
-  var growth = _.pluck(growthByDate, "growth");
-  growth.reverse();
+  let growth = _.pluck(growthByDate, "growth")
+  growth.reverse()
 
-  var accumulativeGrowth = 0;
-  growth.forEach(function(growthPercentage, index) {
+  let accumulativeGrowth = 0
+  growth.forEach((growthPercentage, index) => {
     accumulativeGrowth += growthPercentage
     growth[index] = accumulativeGrowth
   })

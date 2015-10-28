@@ -1,15 +1,15 @@
 // Instruments - Available currency pairs to trade
-Instruments = new Mongo.Collection('instruments');
+Instruments = new Mongo.Collection('instruments')
 
 // Currencies - Single currencies to associate child docs to
-Currencies = new Mongo.Collection('currencies');
+Currencies = new Mongo.Collection('currencies')
 
 // API Data gathered from Oanda servers with minor alterations
-InstHistory = new Mongo.Collection('pairHistory');
-CurrHistory = new Mongo.Collection('currHistory');
+InstHistory = new Mongo.Collection('pairHistory')
+CurrHistory = new Mongo.Collection('currHistory')
 
 // Collection saves calculated growth docs for currencies
-AvgGrowths = new Mongo.Collection('avgGrowths');
+AvgGrowths = new Mongo.Collection('avgGrowths')
 /*
 {
   _id: "",
