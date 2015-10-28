@@ -46,7 +46,12 @@ function storeHistory(start) {
   var getHistories = _.throttle(function (candleFormat, instrument) {
     start = start || getStartForInstrument(instrument, candleFormat);
     console.log(`Getting ${instrument} ${candleFormat} candles since ${start}...`);
-    var httpResult = getHistory(instrument,candleFormat,start);
+    var httpResult = OANDA.getCandles({
+      instrument: instrument,
+      granularity: candleFormat,
+      start: start,
+      end: moment().format("YYYY-MM-DDTHH:mm:ss.000000Z")
+    });
     if (httpResult.data) {
       var history = httpResult.data;
       insertHistory(history);
@@ -70,11 +75,6 @@ function getStartForInstrument(instrument, candleFormat) {
     }
   });
   return last.time;
-}
-
-// Get History for a pair and granularity
-function getHistory (inst,candleFormat,start) {
-  return HTTP.get(OANDA.baseURL + "candles?instrument=" + inst + "&start=" + encodeURIComponent(start) + "&granularity=" + candleFormat + "&dailyAlignment=0&alignmentTimezone=America%2FNew_York&includeFirst=false", OANDA.header);
 }
 
 // Save History
