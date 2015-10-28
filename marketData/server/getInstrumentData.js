@@ -1,7 +1,7 @@
 Meteor.startup(function () {
   // Server startup check if we have instruments
   if (Instruments.find().count() === 0) {
-    var httpResult = getInstruments();
+    var httpResult = OANDA.getInstruments();
     if (httpResult.data) {
       var instruments = httpResult.data.instruments;
       insertInstruments(instruments);
@@ -17,7 +17,7 @@ SyncedCron.add({
     return parser.text('every 1 day');
   },
   job: function() {
-    var httpResult = getInstruments();
+    var httpResult = OANDA.getInstruments();
     if (httpResult.data) {
       var instruments = httpResult.data.instruments;
       if (instruments.length != Instruments.find().count()) {
@@ -34,12 +34,6 @@ SyncedCron.add({
 // ------------------------
 // Shared Functions
 // ------------------------
-
-// Get all the instruments allowed for your account to use
-function getInstruments () {
-  console.log("Getting instruments...");
-  return HTTP.get(OANDA.baseURL + "instruments?accountId=" + OANDA.account, OANDA.header);
-}
 
 // Save Instruments
 function insertInstruments (instruments) {
