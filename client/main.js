@@ -44,6 +44,13 @@ Template.body.events({
   'change #reactive': function (event, template) {
     var limit = $(event.target).val();
     template.limit.set(limit);
+  },
+  
+  'click #clear': function(event) {
+    var theHighchart = $('#container-area').highcharts();
+    theHighchart.series.forEach(function (series) {
+      series.hide();
+    });
   }
 });
 
