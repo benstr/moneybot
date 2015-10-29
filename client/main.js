@@ -1,6 +1,8 @@
 // Computed collection. See seriesData publication.
 SeriesData = new Mongo.Collection('seriesData');
 
+bias = new ReactiveVar("none");
+
 Template.body.onCreated(function() {
   this.limit = new ReactiveVar(20);
 });
@@ -37,6 +39,9 @@ Template.body.helpers({
   },
   limit() {
     return Template.instance().limit.get();
+  },
+  currencies() {
+    return Currencies.find();
   }
 });
 
@@ -51,8 +56,37 @@ Template.body.events({
     theHighchart.series.forEach(function (series) {
       series.hide();
     });
+  },
+
+  'change #bias': function(event) {
+    bias.set($(event.target).val());
   }
 });
+
+seriesData = function(series) {
+  if (bias.get() === "none")
+    return series;
+  var biasSeries;
+  _.forEach(series, function(oneSeries) {
+    if (oneSeries.name === bias.get()) {
+      biasSeries = oneSeries;
+    }
+  });
+  var biasedSeries = [];
+  _.forEach(series, function(oneSeries) {
+    el = {
+      _id: oneSeries._id,
+      currentValue: oneSeries.currentValue,
+      name: oneSeries.name,
+      data: []
+    }
+    _.forEach(oneSeries.data, function(value, n) {
+      el.data[n] = value-biasSeries.data[n];
+    });
+    biasedSeries.push(el);
+  });
+  return biasedSeries;
+}
 
 // Function to draw the area chart
 
@@ -65,8 +99,12 @@ function builtArea(series) {
       currentValue: lastDataValue});
   });
   
+  titleText = 'Currency Growth'
+  if (bias.get() !== "none")
+    titleText = 'Currency Growth relative to '+bias.get()
+
   $('#container-area').highcharts({
-    title: {text: 'Currency Growth'},
+    title: {text: titleText},
     credits: {enabled: false},
     subtitle: {enabled: false},
     xAxis: {
@@ -109,6 +147,6 @@ function builtArea(series) {
       }
     },
 
-    series: series
+    series: seriesData(series)
   });
 }
