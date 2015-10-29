@@ -50,6 +50,14 @@ Template.body.events({
     var limit = $(event.target).val();
     template.limit.set(limit);
   },
+  
+  'click #clear': function(event) {
+    var theHighchart = $('#container-area').highcharts();
+    theHighchart.series.forEach(function (series) {
+      series.hide();
+    });
+  },
+
   'change #bias': function(event) {
     bias.set($(event.target).val());
   }
@@ -86,11 +94,11 @@ function builtArea(series) {
   _.forEach(series, function(oneSeries) {
     let lastDataValue = numeral(oneSeries.data[oneSeries.data.length - 1])
       .format('0.00') + '%';
-
+      
     _.extend(oneSeries, {
       currentValue: lastDataValue});
   });
-
+  
   titleText = 'Currency Growth'
   if (bias.get() !== "none")
     titleText = 'Currency Growth relative to '+bias.get()

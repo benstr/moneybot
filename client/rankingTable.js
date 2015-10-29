@@ -42,6 +42,20 @@ Template.rankingTable.helpers({
 });
 
 Template.rankingTable.events({
+  'click #latest-values tr': function (e) {
+    var el = $(e.currentTarget);
+    var currency = el.data('currency');
+    var theHighchart = $('#container-area').highcharts();
+    theHighchart.series.forEach(function (series) {
+      if (series.name === currency) {
+        if (series.visible)
+          series.hide();
+        else
+          series.show();
+      }
+    });
+  },
+
   'click .valid-pair-item': function (e, template) {
     var el = $(e.currentTarget);
     var instrumentId = el.data('instrument');
