@@ -13,6 +13,7 @@
     </div>
 
     <div class="ui one wide column">
+      <label for="reactive">Days</label>
       <select id="reactive">
         <option value="0">0</option>
         <option value="10">10</option>
@@ -27,6 +28,15 @@
         <option value="100">100</option>
         <option value="120">120</option>
         <option value="140">140</option>
+      </select>
+
+      <br/>
+      <label for="bias">Bias</label>
+      <select id="bias">
+        <option value="none" selected></option>
+      {{#each currency in currencies}}
+        <option value="{{currency.name}}">{{currency.name}}</option>
+      {{/each}}
       </select>
     </div>
 
