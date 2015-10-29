@@ -13,6 +13,7 @@
     </div>
 
     <div class="ui three wide column">
+      <label for="reactive">Days</label>
       <select id="reactive">
         <option value="0">0</option>
         <option value="10">10</option>
@@ -30,6 +31,15 @@
       </select>
 
       <button id="clear">Clear Lines</button>
+
+      <br/>
+      <label for="bias">Bias</label>
+      <select id="bias">
+        <option value="none" selected></option>
+        {{#each currency in currencies}}
+          <option value="{{currency.name}}">{{currency.name}}</option>
+        {{/each}}
+      </select>
     </div>
 
     <h4>Total Currencies: {{totalCurr}} | Total Pairs: {{totalPairs}} | Total Growth Values: {{totalGrowths}} | Total History Points: {{totalHist}}</h4>
