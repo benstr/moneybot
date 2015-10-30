@@ -43,7 +43,7 @@ function storeHistory(start) {
   var instruments = _.map(Instruments.find().fetch(),function(num, key){ return num.instrument; });
   var timer = 0;
 
-  var getHistories = _.throttle(function (candleFormat, instrument) {
+  var getHistories = function (candleFormat, instrument) {
     start = start || getStartForInstrument(instrument, candleFormat);
     console.log(`Getting ${instrument} ${candleFormat} candles since ${start}...`);
     var httpResult = OANDA.getCandles({
@@ -56,7 +56,7 @@ function storeHistory(start) {
       var history = httpResult.data;
       insertHistory(history);
     }
-  }, 500);
+  };
 
   candleFormats.forEach(function (candleFormat) {
     instruments.forEach(function (instrument) {

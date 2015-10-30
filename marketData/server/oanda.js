@@ -15,11 +15,11 @@ OANDA.buildQuery = function(options) {
   }).join("&");
 };
 
-OANDA.get = function(route, options) {
+OANDA.get = _.throttle(Meteor.bindEnvironment(function(route, options) {
   var query = OANDA.buildQuery(options);
   console.log("GET: " + route + "?" + query);
   return HTTP.get(OANDA.baseURL + route + "?" + query, OANDA.header);
-};
+}), 500);
 
 OANDA.getInstruments = function(options) {
   return OANDA.get("instruments", _.extend({
