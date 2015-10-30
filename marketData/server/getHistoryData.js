@@ -52,7 +52,7 @@ function storeHistory(start) {
       start: start,
       end: moment().format("YYYY-MM-DDTHH:mm:ss.000000Z")
     });
-    if (httpResult.data) {
+    if (httpResult && httpResult.data) {
       var history = httpResult.data;
       insertHistory(history);
     }
