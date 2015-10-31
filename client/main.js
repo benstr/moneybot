@@ -61,6 +61,28 @@ Template.body.events({
   }
 });
 
+getVisibleSeriesNames = function() {
+  var visibleSeriesNames = [];
+  var theHighchart = $('#container-area').highcharts();
+  if (theHighchart && theHighchart.series) {
+    theHighchart.series.forEach(function (series) {
+      if (series.visible)
+        visibleSeriesNames.push(series.name);
+    });
+  }
+  return visibleSeriesNames;
+}
+
+showVisibleSeries = function(visibleSeriesNames) {
+  var theHighchart = $('#container-area').highcharts();
+  theHighchart.series.forEach(function (series) {
+    if (visibleSeriesNames.indexOf(series.name) === -1)
+      series.hide();
+    else
+      series.show();
+  });
+}
+
 seriesData = function(series) {
   if (bias.get() === "none")
     return series;
@@ -89,6 +111,9 @@ seriesData = function(series) {
 // Function to draw the area chart
 
 function builtArea(series) {
+  var visibleSeriesNames = getVisibleSeriesNames();
+  var series = seriesData(series);
+
   _.forEach(series, function(oneSeries) {
     let lastDataValue = numeral(oneSeries.data[oneSeries.data.length - 1])
       .format('0.00') + '%';
@@ -145,6 +170,9 @@ function builtArea(series) {
       }
     },
 
-    series: seriesData(series)
+    series: series
   });
+
+  if (visibleSeriesNames.length > 0)
+    showVisibleSeries(visibleSeriesNames);
 }
