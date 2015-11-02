@@ -34,9 +34,6 @@ Template.body.helpers({
   totalGrowths() {
     return Counts.get('totalGrowths');
   },
-  totalHist() {
-    return Counts.get('totalHist');
-  },
   limit() {
     return Template.instance().limit.get();
   },
