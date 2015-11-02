@@ -8,7 +8,7 @@ Meteor.startup(function () {
   Meteor.setTimeout(function () {
     if (InstHistory.find().count() === 0) {
       console.log("~~ START SEED MARKET DATA GET ~~");
-      var from = moment().subtract(120, "days");
+      var from = moment().subtract(52, "weeks");
       var utc = from.utc().format("YYYY-MM-DDTHH:mm:ss.000000Z");
       storeHistory(utc);
       console.log("~~ FINISHED SEED DATA GET ~~");
